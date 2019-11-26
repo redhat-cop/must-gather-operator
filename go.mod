@@ -3,8 +3,11 @@ module github.com/redhat-cop/must-gather-operator
 go 1.13
 
 require (
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/go-openapi/spec v0.19.0
 	github.com/operator-framework/operator-sdk v0.12.0
+	github.com/redhat-cop/operator-utils v0.1.0
+	github.com/scylladb/go-set v1.0.2
 	github.com/spf13/pflag v1.0.3
 	k8s.io/api v0.0.0
 	k8s.io/apimachinery v0.0.0

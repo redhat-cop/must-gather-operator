@@ -30,8 +30,41 @@ spec:
           type: object
         spec:
           description: MustGatherSpec defines the desired state of MustGather
+          properties:
+            caseID:
+              description: The is of the case this must gather will be uploaded to
+              type: string
+            caseManagementAccountSecretRef:
+              description: the secret container a username and password field to be
+                used to authenticate with red hat case management systems
+              properties:
+                name:
+                  description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                    TODO: Add other useful fields. apiVersion, kind, uid?'
+                  type: string
+              type: object
+            mustGatherImages:
+              description: 'The list of must gather images to run, optional, it will
+                default to: quay.io/openshift/origin-must-gather:latest'
+              items:
+                type: string
+              type: array
+            serviceAccountRef:
+              default: '{Name:default}'
+              description: the service account to use to run the must gather job pod,
+                defaults to default
+              properties:
+                name:
+                  description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                    TODO: Add other useful fields. apiVersion, kind, uid?'
+                  type: string
+              type: object
+          required:
+          - caseID
+          - caseManagementAccountSecretRef
           type: object
         status:
+          $ref: '#/definitions/github.com~1redhat-cop~1operator-utils~1pkg~1util~1apis~0ReconcileStatus'
           description: MustGatherStatus defines the observed state of MustGather
           type: object
       type: object

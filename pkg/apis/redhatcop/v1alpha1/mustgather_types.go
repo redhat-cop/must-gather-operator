@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/redhat-cop/operator-utils/pkg/util/apis"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -13,11 +14,11 @@ import (
 type MustGatherSpec struct {
 	// The is of the case this must gather will be uploaded to
 	// +kubebuilder:validation:Required
-	CaseID string `json:"caseid"`
+	CaseID string `json:"caseID"`
 
 	// the secret container a username and password field to be used to authenticate with red hat case management systems
 	// +kubebuilder:validation:Required
-	CaseManagementAccountSecretRef corev1.LocalObjectReference `json:"caseManagementSecretRef"`
+	CaseManagementAccountSecretRef corev1.LocalObjectReference `json:"caseManagementAccountSecretRef"`
 
 	// the service account to use to run the must gather job pod, defaults to default
 	// +kubebuilder:validation:Optional
@@ -33,6 +34,15 @@ type MustGatherSpec struct {
 // MustGatherStatus defines the observed state of MustGather
 // +k8s:openapi-gen=true
 type MustGatherStatus struct {
+	apis.ReconcileStatus `json:",inline"`
+}
+
+func (m *MustGather) GetReconcileStatus() apis.ReconcileStatus {
+	return m.Status.ReconcileStatus
+}
+
+func (m *MustGather) SetReconcileStatus(reconcileStatus apis.ReconcileStatus) {
+	m.Status.ReconcileStatus = reconcileStatus
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

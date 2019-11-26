@@ -1,0 +1,20 @@
+#!/bin/sh -e
+
+# this shell is responsible for compressing the must gather files and uploading to the case management system
+# it can count on the following variables to be set
+# username: the user name for redhat case management system
+# password: the password for redhat case management system
+# caseid: the case id to upload to
+# must_gather_output: the directory in which the must gather agents have collected the information
+# must_gather_upoload: a workspace directory that can be used as stage to zip and upload the must gather compressed file
+
+set -o nounset
+set -o errexit
+
+
+tar cvaf $must_gather_upoload/must-gather.tar.gz $must_gather_output/
+
+# TODO for Andy, add here the loging logic and upload logic
+# for now this will wait for ever to allow debugging
+
+trap : TERM INT; sleep infinity & wait

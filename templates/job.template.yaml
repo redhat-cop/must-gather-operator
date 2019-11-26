@@ -7,11 +7,11 @@ spec:
   template:
     spec:
       containers:
-      - command:
+      - entrypoint:
         - /bin/bash
         - -c
-        - tar cvaf /must-gather-upload/must-gather.tar.gz /must-gather-output/ && 
-        image: ??
+        - /usr/local/bin/upload
+        image: quay.io/redhat-cop/must-gather-operator:latest
         name: upload
         volumeMounts:
         - mountPath: /must-gather-output
@@ -28,7 +28,13 @@ spec:
           valueFrom:
             secretKeyRef:
               name: caseManagementSecret
-              key: password              
+              key: password
+        - name: caseid
+          value: {{ .Spec.CaseID }}
+        - name: must_gather_output
+          value: /must-gather-output
+        - name: must_gather_upload
+          value: /must-gather-upload                    
       initContainers:      
 {{- range $index, $element := .Spec.MustGatherImages }}      
       - command:

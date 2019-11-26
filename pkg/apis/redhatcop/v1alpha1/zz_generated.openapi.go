@@ -67,8 +67,51 @@ func schema_pkg_apis_redhatcop_v1alpha1_MustGatherSpec(ref common.ReferenceCallb
 			SchemaProps: spec.SchemaProps{
 				Description: "MustGatherSpec defines the desired state of MustGather",
 				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"caseID": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The is of the case this must gather will be uploaded to",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"caseManagementAccountSecretRef": {
+						SchemaProps: spec.SchemaProps{
+							Description: "the secret container a username and password field to be used to authenticate with red hat case management systems",
+							Ref:         ref("k8s.io/api/core/v1.LocalObjectReference"),
+						},
+					},
+					"serviceAccountRef": {
+						SchemaProps: spec.SchemaProps{
+							Description: "the service account to use to run the must gather job pod, defaults to default",
+							Ref:         ref("k8s.io/api/core/v1.LocalObjectReference"),
+						},
+					},
+					"mustGatherImages": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-type": "set",
+							},
+						},
+						SchemaProps: spec.SchemaProps{
+							Description: "The list of must gather images to run, optional, it will default to: quay.io/openshift/origin-must-gather:latest",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Type:   []string{"string"},
+										Format: "",
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"caseID", "caseManagementAccountSecretRef"},
 			},
 		},
+		Dependencies: []string{
+			"k8s.io/api/core/v1.LocalObjectReference"},
 	}
 }
 
@@ -78,7 +121,28 @@ func schema_pkg_apis_redhatcop_v1alpha1_MustGatherStatus(ref common.ReferenceCal
 			SchemaProps: spec.SchemaProps{
 				Description: "MustGatherStatus defines the observed state of MustGather",
 				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"status": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+					"lastUpdate": {
+						SchemaProps: spec.SchemaProps{
+							Ref: ref("k8s.io/apimachinery/pkg/apis/meta/v1.Time"),
+						},
+					},
+					"reason": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"string"},
+							Format: "",
+						},
+					},
+				},
 			},
 		},
+		Dependencies: []string{
+			"k8s.io/apimachinery/pkg/apis/meta/v1.Time"},
 	}
 }
