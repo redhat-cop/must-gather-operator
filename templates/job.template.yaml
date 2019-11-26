@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .ObjectMeta.Name }}
+  namespace: {{ .ObjectMeta.Namespace }}
+spec:
+  template:
+    spec:
+      containers:
+      - command:
+        - /bin/bash
+        - -c
+        - tar cvaf /must-gather-upload/must-gather.tar.gz /must-gather-output/ && 
+        image: ??
+        name: upload
+        volumeMounts:
+        - mountPath: /must-gather-output
+          name: must-gather-output
+        - mountPath: /must-gather-upload
+          name: must-gather-output
+        env:
+        - name: username
+          valueFrom:
+            secretKeyRef:
+              name: caseManagementSecret
+              key: username
+        - name: password
+          valueFrom:
+            secretKeyRef:
+              name: caseManagementSecret
+              key: password              
+      initContainers:      
+{{- range $index, $element := .Spec.MustGatherImages }}      
+      - command:
+        - /usr/bin/gather
+        image: {{ $element }}
+        name: gather-{{ $index }}
+        volumeMounts:
+        - mountPath: /must-gather-output
+          name: must-gather-output
+{{- end }}
+      serviceAccountName: {{ .Spec.ServiceAccountRef.Name }}
+      volumes:
+      - emptyDir: {}
+        name: must-gather-output
+      - emptyDir: {}
+        name: must-gather-upload
+      - name: caseManagementSecret
+        secret:
+          secretName: {{ .Spec.CaseManagementAccountSecretRef.Name }}                
+  backoffLimit: 4
