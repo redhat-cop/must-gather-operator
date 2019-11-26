@@ -2,6 +2,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: must-gather-operator
+  namespace: {{ .Release.Namespace }}  
 rules:
 # leader election   
 - apiGroups:
@@ -44,7 +45,7 @@ rules:
   - must-gather-operator
   verbs:
   - "update"
-# operator busienss logic
+# operator busienss logic  
 - apiGroups:
   - redhatcop.redhat.io
   resources:
@@ -59,4 +60,4 @@ rules:
   verbs:
   - get
   - list
-  - create  
+  - create    

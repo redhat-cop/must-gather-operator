@@ -50,9 +50,8 @@ spec:
                 type: string
               type: array
             serviceAccountRef:
-              default: '{Name:default}'
               description: the service account to use to run the must gather job pod,
-                defaults to default
+                defaults to default  +kubebuilder:default:="{Name:default}"
               properties:
                 name:
                   description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
@@ -64,8 +63,18 @@ spec:
           - caseManagementAccountSecretRef
           type: object
         status:
-          $ref: '#/definitions/github.com~1redhat-cop~1operator-utils~1pkg~1util~1apis~0ReconcileStatus'
           description: MustGatherStatus defines the observed state of MustGather
+          properties:
+            lastUpdate:
+              format: date-time
+              type: string
+            reason:
+              type: string
+            status:
+              enum:
+              - Success
+              - Failure
+              type: string
           type: object
       type: object
   version: v1alpha1

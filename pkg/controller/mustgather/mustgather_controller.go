@@ -22,7 +22,7 @@ import (
 
 const controllerName = "mustgather-controller"
 
-// generate this by running: go-bindata -o pkg/controller/mustgather/template.go templates/
+// generate this by running: go-bindata -o pkg/controller/mustgather/template.go -pkg mustgather templates/
 const templateAssetName = "templates/job.template.yaml"
 
 var log = logf.Log.WithName(controllerName)
@@ -185,6 +185,10 @@ func (r *ReconcileMustGather) IsInitialized(instance *redhatcopv1alpha1.MustGath
 	if !imageSet.Has(defaultMustGatherImage) {
 		imageSet.Add(defaultMustGatherImage)
 		instance.Spec.MustGatherImages = imageSet.List()
+		initialized = false
+	}
+	if instance.Spec.ServiceAccountRef.Name == "" {
+		instance.Spec.ServiceAccountRef.Name = "default"
 		initialized = false
 	}
 	return initialized

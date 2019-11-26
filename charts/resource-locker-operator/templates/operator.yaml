@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: must-gather-operator
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
@@ -16,7 +17,7 @@ spec:
       containers:
         - name: must-gather-operator
           # Replace this with the built image name
-          image: quay.io/redhat-cop/must-gather-operator:latest
+          image: quay.io/redhat-cop/must-gather-operator:{{ .Values.image_tag }}
           command:
           - must-gather-operator
           imagePullPolicy: Always
@@ -30,4 +31,4 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
-              value: "must-gather-operator"
+              value: "must-gather-operator"          

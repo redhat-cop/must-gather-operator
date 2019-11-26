@@ -6,6 +6,7 @@ metadata:
 spec:
   template:
     spec:
+      restartPolicy: OnFailure
       containers:
       - entrypoint:
         - /bin/bash
@@ -22,15 +23,15 @@ spec:
         - name: username
           valueFrom:
             secretKeyRef:
-              name: caseManagementSecret
+              name: case-management-secret
               key: username
         - name: password
           valueFrom:
             secretKeyRef:
-              name: caseManagementSecret
+              name: case-management-secret
               key: password
         - name: caseid
-          value: {{ .Spec.CaseID }}
+          value: "{{ .Spec.CaseID }}"
         - name: must_gather_output
           value: /must-gather-output
         - name: must_gather_upload
@@ -51,7 +52,7 @@ spec:
         name: must-gather-output
       - emptyDir: {}
         name: must-gather-upload
-      - name: caseManagementSecret
+      - name: case-management-secret
         secret:
           secretName: {{ .Spec.CaseManagementAccountSecretRef.Name }}                
   backoffLimit: 4

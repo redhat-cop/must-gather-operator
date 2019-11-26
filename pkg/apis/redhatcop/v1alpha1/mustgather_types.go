@@ -1,9 +1,9 @@
 package v1alpha1
 
 import (
+	"github.com/redhat-cop/operator-utils/pkg/util/apis"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"github.com/redhat-cop/operator-utils/pkg/util/apis"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -22,7 +22,7 @@ type MustGatherSpec struct {
 
 	// the service account to use to run the must gather job pod, defaults to default
 	// +kubebuilder:validation:Optional
-	// +kubebuilder:default:="{Name:default}"
+	/* +kubebuilder:default:="{Name:default}" */
 	ServiceAccountRef corev1.LocalObjectReference `json:"serviceAccountRef,omitempty"`
 
 	// The list of must gather images to run, optional, it will default to: quay.io/openshift/origin-must-gather:latest
@@ -34,15 +34,24 @@ type MustGatherSpec struct {
 // MustGatherStatus defines the observed state of MustGather
 // +k8s:openapi-gen=true
 type MustGatherStatus struct {
-	apis.ReconcileStatus `json:",inline"`
+	// +kubebuilder:validation:Enum="Success";"Failure"
+	Status     string      `json:"status,omitempty"`
+	LastUpdate metav1.Time `json:"lastUpdate,omitempty"`
+	Reason     string      `json:"reason,omitempty"`
 }
 
 func (m *MustGather) GetReconcileStatus() apis.ReconcileStatus {
-	return m.Status.ReconcileStatus
+	return apis.ReconcileStatus{
+		Status:     m.Status.Status,
+		LastUpdate: m.Status.LastUpdate,
+		Reason:     m.Status.Reason,
+	}
 }
 
 func (m *MustGather) SetReconcileStatus(reconcileStatus apis.ReconcileStatus) {
-	m.Status.ReconcileStatus = reconcileStatus
+	m.Status.Status = reconcileStatus.Status
+	m.Status.LastUpdate = reconcileStatus.LastUpdate
+	m.Status.Reason = reconcileStatus.Reason
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
