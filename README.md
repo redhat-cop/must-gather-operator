@@ -11,7 +11,6 @@ kind: MustGather
 metadata:
   name: example-mustgather
 spec:
-  # Add fields here
   caseID: '02527285'
   caseManagementAccountSecretRef:
     name: case-management-creds
@@ -27,7 +26,6 @@ kind: MustGather
 metadata:
   name: full-mustgather
 spec:
-  # Add fields here
   caseID: '02527285'
   caseManagementAccountSecretRef:
     name: case-management-creds
