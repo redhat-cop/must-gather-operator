@@ -7,6 +7,8 @@ ENV OPERATOR=/usr/local/bin/must-gather-operator \
 # install operator binary
 COPY build/_output/bin/must-gather-operator ${OPERATOR}
 
+RUN microdnf install tar gzip && microdnf clean all
+
 COPY build/bin /usr/local/bin
 RUN  /usr/local/bin/user_setup
 

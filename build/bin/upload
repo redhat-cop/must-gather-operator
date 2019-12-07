@@ -8,13 +8,36 @@
 # must_gather_output: the directory in which the must gather agents have collected the information
 # must_gather_upoload: a workspace directory that can be used as stage to zip and upload the must gather compressed file
 
-set -o nounset
 set -o errexit
 
+must_gather_output=${must_gather_output:="/must-gather-output"}
+must_gather_upload=${must_gather_upload:="/must-gather-upload"}
+FILENAME_PREFIX=${FILENAME_PREFIX:="must-gather"}
+CASE_COMMENT=${CASE_COMMENT:="File upload from must-gather tool"}
+CURRENT_TIMESTAMP=$(date --utc +%Y%m%d_%H%M%SZ)
+PRIVATE_ATTACHMENT_FLAG=""
+CSP_FILENAME=${FILENAME_PREFIX}-${CURRENT_TIMESTAMP}.tar.gz
+CSP_FILE="${must_gather_upload}/${CSP_FILENAME}"
 
-tar cvaf $must_gather_upoload/must-gather.tar.gz $must_gather_output/
+if [ -z "${caseid}" ] || [ -z "${username}" ] || [ -z "${password}" ];
+then
+  echo "Error: Required Parameters have not been provided. Exiting..."
+  exit 1
+fi
 
-# TODO for Andy, add here the loging logic and upload logic
-# for now this will wait for ever to allow debugging
+if [ -z "${attachment_private}" ] && [  "${attachment_private}" == "true" ];
+then
+  PRIVATE_ATTACHMENT_FLAG="?private=true"
+fi
 
-trap : TERM INT; sleep infinity & wait
+tar cvaf "$must_gather_upload/${CSP_FILENAME}" $must_gather_output/
+
+echo "Uploading '${CSP_FILENAME}' to Red Hat Customer Portal case ${caseid}"
+
+status_code=$(curl --write-out %{http_code} --silent --output /dev/null -u ${username}:${password} -X POST -F "file=@${CSP_FILE}" "https://api.access.redhat.com/rs/cases/${caseid}/attachments${PRIVATE_ATTACHMENT_FLAG}" -H 'Accept: text/plain' --form-string "description=${CASE_COMMENT}")
+if [[ "$status_code" -ne 201 ]];
+then
+  echo "Error: Upload to Red Hat Customer Portal did not return expected status code. Expected: 201. Actual: $status_code"
+fi
+
+echo "Successfully added '${CSP_FILENAME}' to Red Hat Customer Portal case ${caseid}"
