@@ -139,7 +139,14 @@ func schema_pkg_apis_redhatcop_v1alpha1_MustGatherStatus(ref common.ReferenceCal
 							Format: "",
 						},
 					},
+					"completed": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"boolean"},
+							Format: "",
+						},
+					},
 				},
+				Required: []string{"completed"},
 			},
 		},
 		Dependencies: []string{

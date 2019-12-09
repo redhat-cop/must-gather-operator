@@ -6,7 +6,7 @@
 # password: the password for redhat case management system
 # caseid: the case id to upload to
 # must_gather_output: the directory in which the must gather agents have collected the information
-# must_gather_upoload: a workspace directory that can be used as stage to zip and upload the must gather compressed file
+# must_gather_upload: a workspace directory that can be used as stage to zip and upload the must gather compressed file
 
 set -o errexit
 

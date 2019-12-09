@@ -38,6 +38,11 @@ spec:
 
 in this example we are using a specific service account (which must have cluster admin permissions as per must-gather requirements) and we are specifying a couple of additional must gather images to be run for the `kubevirt` and `ocs` subsystem. If not specified serviceAccountRef.Name will default to `default`. Also the standard must gather image: `quay.io/openshift/origin-must-gather:latest` is always added by default.
 
+## Garbage collection
+
+MustGather instances are cleaned up by the Must Gather operator about 6 hours after completion, regardless of whether they were successful.
+This is a way to prevent the accumulation of unwanted MustGather resources and their corresponding job resources.
+
 ## Deploying the Operator
 
 This is a cluster-level operator that you can deploy in any namespace, `must-gather-operator` is recommended.
@@ -101,6 +106,8 @@ Using the [operator-sdk](https://github.com/operator-framework/operator-sdk), ru
 ```shell
 oc apply -f deploy/crds/redhatcop.redhat.io_mustgathers_crd.yaml
 oc new-project must-gather-operator
+export DEFAULT_MUST_GATHER_IMAGE='quay.io/openshift/origin-must-gather:4.2'
+export JOB_TEMPLATE_FILE_NAME=./build/templates/job.template.yaml
 OPERATOR_NAME='must-gather-operator' operator-sdk --verbose up local --namespace "must-gather-operator"
 ```
 

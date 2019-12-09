@@ -2,7 +2,12 @@ package mustgather
 
 import (
 	"context"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"reflect"
 	"text/template"
+	"time"
 
 	redhatcopv1alpha1 "github.com/redhat-cop/must-gather-operator/pkg/apis/redhatcop/v1alpha1"
 	"github.com/redhat-cop/operator-utils/pkg/util"
@@ -11,23 +16,44 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/types"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
+	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
 const controllerName = "mustgather-controller"
 
-// generate this by running: go-bindata -o pkg/controller/mustgather/template.go -pkg mustgather templates/
-const templateAssetName = "templates/job.template.yaml"
+const templateFileNameEnv = "JOB_TEMPLATE_FILE_NAME"
+const defaultMustGatherImageEnv = "DEFAULT_MUST_GATHER_IMAGE"
+const garbageCollectionElapsedEnv = "GARBAGE_COLLECTION_DELAY"
 
 var log = logf.Log.WithName(controllerName)
+var garbageCollectionDuration time.Duration
 
-const defaultMustGatherImage = "quay.io/openshift/origin-must-gather:latest"
+func init() {
+	var ok bool
+	defaultMustGatherImage, ok = os.LookupEnv(defaultMustGatherImageEnv)
+	if !ok {
+		defaultMustGatherImage = "quay.io/openshift/origin-must-gather:latest"
+	}
+	fmt.Println("using default must gather image: " + defaultMustGatherImage)
+	garbageCollectionInterval, ok := os.LookupEnv(garbageCollectionElapsedEnv)
+	if !ok {
+		garbageCollectionInterval = "6h"
+	}
+	var err error
+	garbageCollectionDuration, err = time.ParseDuration(garbageCollectionInterval)
+	if err != nil {
+		fmt.Println("unable to partse time: " + garbageCollectionInterval)
+	}
+}
+
+var defaultMustGatherImage string
 
 var jobTemplate *template.Template
 
@@ -67,12 +93,35 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 		return err
 	}
 
+	isStateUpdated := predicate.Funcs{
+		UpdateFunc: func(e event.UpdateEvent) bool {
+			oldJob, ok := e.ObjectOld.(*batchv1.Job)
+			if !ok {
+				return false
+			}
+			newJob, ok := e.ObjectNew.(*batchv1.Job)
+			if !ok {
+				return false
+			}
+			return !reflect.DeepEqual(oldJob.Status, newJob.Status)
+		},
+		CreateFunc: func(e event.CreateEvent) bool {
+			return false
+		},
+		DeleteFunc: func(e event.DeleteEvent) bool {
+			return false
+		},
+		GenericFunc: func(e event.GenericEvent) bool {
+			return false
+		},
+	}
+
 	// TODO(user): Modify this to be the types you create that are owned by the primary resource
 	// Watch for changes to secondary resource Pods and requeue the owner MustGather
 	err = c.Watch(&source.Kind{Type: &batchv1.Job{}}, &handler.EnqueueRequestForOwner{
 		IsController: true,
 		OwnerType:    &redhatcopv1alpha1.MustGather{},
-	})
+	}, isStateUpdated)
 	if err != nil {
 		return err
 	}
@@ -81,9 +130,13 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 }
 
 func initializeTemplate() (*template.Template, error) {
-	text, err := Asset(templateAssetName)
+	templateFileName, ok := os.LookupEnv(templateFileNameEnv)
+	if !ok {
+		templateFileName = "/etc/templates/job.template.yaml"
+	}
+	text, err := ioutil.ReadFile(templateFileName)
 	if err != nil {
-		log.Error(err, "unable to exctract asset", "name", templateAssetName)
+		log.Error(err, "Error reading job template file", "filename", templateFileName)
 		return &template.Template{}, err
 	}
 	jobTemplate, err := template.New("MustGatherJob").Parse(string(text))
@@ -142,6 +195,12 @@ func (r *ReconcileMustGather) Reconcile(request reconcile.Request) (reconcile.Re
 		return reconcile.Result{}, nil
 	}
 
+	//if job is complete and onject has been created more than 6 hrs ago delete instance
+	if instance.Status.Completed && time.Since(instance.CreationTimestamp.Time).Milliseconds() > garbageCollectionDuration.Milliseconds() {
+		err := r.DeleteResource(instance)
+		return reconcile.Result{}, err
+	}
+
 	job, err := r.getJobFromInstance(instance)
 	if err != nil {
 		log.Error(err, "unable to get job from", "instance", instance)
@@ -157,7 +216,8 @@ func (r *ReconcileMustGather) Reconcile(request reconcile.Request) (reconcile.Re
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// job is not there, create it.
-			err = r.GetClient().Create(context.TODO(), job, &client.CreateOptions{})
+			err = r.CreateResourceIfNotExists(instance, instance.GetNamespace(), job)
+			//err = r.GetClient().Create(context.TODO(), job, &client.CreateOptions{})
 			if err != nil {
 				log.Error(err, "unable to create", "job", job)
 				return r.ManageError(instance, err)
@@ -176,6 +236,11 @@ func (r *ReconcileMustGather) Reconcile(request reconcile.Request) (reconcile.Re
 	// 1. the mustgather instance was updated, which we don't support and we are going to ignore
 	// 2. the job was updated, probably the status piece. we should the update the status of the instance, not supported yet.
 
+	return r.updateStatus(instance, job1)
+}
+
+func (r *ReconcileMustGather) updateStatus(instance *redhatcopv1alpha1.MustGather, job *batchv1.Job) (reconcile.Result, error) {
+	instance.Status.Completed = !job.Status.CompletionTime.IsZero()
 	return r.ManageSuccess(instance)
 }
 
