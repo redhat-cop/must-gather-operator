@@ -38,6 +38,7 @@ type MustGatherStatus struct {
 	Status     string      `json:"status,omitempty"`
 	LastUpdate metav1.Time `json:"lastUpdate,omitempty"`
 	Reason     string      `json:"reason,omitempty"`
+	Completed  bool        `json:"completed"`
 }
 
 func (m *MustGather) GetReconcileStatus() apis.ReconcileStatus {

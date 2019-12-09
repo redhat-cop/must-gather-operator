@@ -65,6 +65,8 @@ spec:
         status:
           description: MustGatherStatus defines the observed state of MustGather
           properties:
+            completed:
+              type: boolean
             lastUpdate:
               format: date-time
               type: string
@@ -75,6 +77,8 @@ spec:
               - Success
               - Failure
               type: string
+          required:
+          - completed
           type: object
       type: object
   version: v1alpha1

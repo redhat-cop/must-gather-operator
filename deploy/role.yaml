@@ -53,7 +53,7 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-  - "batch"
+  - "batch/v1"
   resources:
   - jobs
   - secrets
