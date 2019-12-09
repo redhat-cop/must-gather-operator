@@ -34,10 +34,12 @@ tar cvaf "$must_gather_upload/${CSP_FILENAME}" $must_gather_output/
 
 echo "Uploading '${CSP_FILENAME}' to Red Hat Customer Portal case ${caseid}"
 
-status_code=$(curl --write-out %{http_code} --silent --output /dev/null -u ${username}:${password} -X POST -F "file=@${CSP_FILE}" "https://api.access.redhat.com/rs/cases/${caseid}/attachments${PRIVATE_ATTACHMENT_FLAG}" -H 'Accept: text/plain' --form-string "description=${CASE_COMMENT}")
+status_code=$(curl --write-out %{http_code} -o $must_gather_upload/curl.log -u ${username}:${password} -X POST -F "file=@${CSP_FILE}" "https://api.access.redhat.com/rs/cases/${caseid}/attachments${PRIVATE_ATTACHMENT_FLAG}" -H 'Accept: text/plain' --form-string "description=${CASE_COMMENT}")
+cat $must_gather_upload/curl.log
 if [[ "$status_code" -ne 201 ]];
 then
   echo "Error: Upload to Red Hat Customer Portal did not return expected status code. Expected: 201. Actual: $status_code"
+  exit 1
 fi
 
 echo "Successfully added '${CSP_FILENAME}' to Red Hat Customer Portal case ${caseid}"
