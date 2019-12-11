@@ -14,6 +14,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/redhat-cop/must-gather-operator/pkg/apis/redhatcop/v1alpha1.MustGather":       schema_pkg_apis_redhatcop_v1alpha1_MustGather(ref),
 		"github.com/redhat-cop/must-gather-operator/pkg/apis/redhatcop/v1alpha1.MustGatherSpec":   schema_pkg_apis_redhatcop_v1alpha1_MustGatherSpec(ref),
 		"github.com/redhat-cop/must-gather-operator/pkg/apis/redhatcop/v1alpha1.MustGatherStatus": schema_pkg_apis_redhatcop_v1alpha1_MustGatherStatus(ref),
+		"github.com/redhat-cop/must-gather-operator/pkg/apis/redhatcop/v1alpha1.ProxySpec":        schema_pkg_apis_redhatcop_v1alpha1_ProxySpec(ref),
 	}
 }
 
@@ -94,7 +95,7 @@ func schema_pkg_apis_redhatcop_v1alpha1_MustGatherSpec(ref common.ReferenceCallb
 							},
 						},
 						SchemaProps: spec.SchemaProps{
-							Description: "The list of must gather images to run, optional, it will default to: quay.io/openshift/origin-must-gather:latest",
+							Description: "The list of must gather images to run, optional, it will default to: $DEFAULT_MUST_GATHER_IMAGE",
 							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{
@@ -106,12 +107,18 @@ func schema_pkg_apis_redhatcop_v1alpha1_MustGatherSpec(ref common.ReferenceCallb
 							},
 						},
 					},
+					"proxyConfig": {
+						SchemaProps: spec.SchemaProps{
+							Description: "This represents the proxy configuration to be used. If left empty it will default to the cluster-level proxy configuration.",
+							Ref:         ref("github.com/redhat-cop/must-gather-operator/pkg/apis/redhatcop/v1alpha1.ProxySpec"),
+						},
+					},
 				},
 				Required: []string{"caseID", "caseManagementAccountSecretRef"},
 			},
 		},
 		Dependencies: []string{
-			"k8s.io/api/core/v1.LocalObjectReference"},
+			"github.com/redhat-cop/must-gather-operator/pkg/apis/redhatcop/v1alpha1.ProxySpec", "k8s.io/api/core/v1.LocalObjectReference"},
 	}
 }
 
@@ -151,5 +158,38 @@ func schema_pkg_apis_redhatcop_v1alpha1_MustGatherStatus(ref common.ReferenceCal
 		},
 		Dependencies: []string{
 			"k8s.io/apimachinery/pkg/apis/meta/v1.Time"},
+	}
+}
+
+func schema_pkg_apis_redhatcop_v1alpha1_ProxySpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"httpProxy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "httpProxy is the URL of the proxy for HTTP requests.  Empty means unset and will not result in an env var.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"httpsProxy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "httpsProxy is the URL of the proxy for HTTPS requests.  Empty means unset and will not result in an env var.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"noProxy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "noProxy is the list of domains for which the proxy should not be used.  Empty means unset and will not result in an env var.",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
 	}
 }

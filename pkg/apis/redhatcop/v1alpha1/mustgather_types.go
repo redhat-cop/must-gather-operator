@@ -25,10 +25,29 @@ type MustGatherSpec struct {
 	/* +kubebuilder:default:="{Name:default}" */
 	ServiceAccountRef corev1.LocalObjectReference `json:"serviceAccountRef,omitempty"`
 
-	// The list of must gather images to run, optional, it will default to: quay.io/openshift/origin-must-gather:latest
+	// The list of must gather images to run, optional, it will default to: $DEFAULT_MUST_GATHER_IMAGE
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	MustGatherImages []string `json:"mustGatherImages,omitempty"`
+
+	// This represents the proxy configuration to be used. If left empty it will default to the cluster-level proxy configuration.
+	// +kubebuilder:validation:Optional
+	ProxyConfig ProxySpec `json:"proxyConfig,omitempty"`
+}
+
+// +k8s:openapi-gen=true
+type ProxySpec struct {
+	// httpProxy is the URL of the proxy for HTTP requests.  Empty means unset and will not result in an env var.
+	// +optional
+	HTTPProxy string `json:"httpProxy,omitempty"`
+
+	// httpsProxy is the URL of the proxy for HTTPS requests.  Empty means unset and will not result in an env var.
+	// +optional
+	HTTPSProxy string `json:"httpsProxy,omitempty"`
+
+	// noProxy is the list of domains for which the proxy should not be used.  Empty means unset and will not result in an env var.
+	// +optional
+	NoProxy string `json:"noProxy,omitempty"`
 }
 
 // MustGatherStatus defines the observed state of MustGather

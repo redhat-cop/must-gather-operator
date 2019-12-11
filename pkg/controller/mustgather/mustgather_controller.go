@@ -9,6 +9,7 @@ import (
 	"text/template"
 	"time"
 
+	configv1 "github.com/openshift/api/config/v1"
 	redhatcopv1alpha1 "github.com/redhat-cop/must-gather-operator/pkg/apis/redhatcop/v1alpha1"
 	"github.com/redhat-cop/operator-utils/pkg/util"
 	"github.com/scylladb/go-set/strset"
@@ -255,6 +256,20 @@ func (r *ReconcileMustGather) IsInitialized(instance *redhatcopv1alpha1.MustGath
 	if instance.Spec.ServiceAccountRef.Name == "" {
 		instance.Spec.ServiceAccountRef.Name = "default"
 		initialized = false
+	}
+	if reflect.DeepEqual(instance.Spec.ProxyConfig, configv1.ProxySpec{}) {
+		platformProxy := &configv1.Proxy{}
+		err := r.GetClient().Get(context.TODO(), types.NamespacedName{Name: "cluster"}, platformProxy)
+		if err != nil {
+			log.Error(err, "unable to find cluster proxy configuration")
+		} else {
+			instance.Spec.ProxyConfig = redhatcopv1alpha1.ProxySpec{
+				HTTPProxy:  platformProxy.Spec.HTTPProxy,
+				HTTPSProxy: platformProxy.Spec.HTTPSProxy,
+				NoProxy:    platformProxy.Spec.NoProxy,
+			}
+			initialized = false
+		}
 	}
 	return initialized
 }

@@ -62,3 +62,12 @@ rules:
   - list
   - create  
   - watch
+- apiGroups:
+  - "config.openshift.io/v1"
+  resources:
+  - proxies
+  verbs:
+  - get
+  - list
+  resourceNames:
+  - cluster

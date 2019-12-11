@@ -38,6 +38,25 @@ spec:
 
 in this example we are using a specific service account (which must have cluster admin permissions as per must-gather requirements) and we are specifying a couple of additional must gather images to be run for the `kubevirt` and `ocs` subsystem. If not specified serviceAccountRef.Name will default to `default`. Also the standard must gather image: `quay.io/openshift/origin-must-gather:latest` is always added by default.
 
+## Proxy Support
+
+The MustGather operator supports using a proxy. The proxy setting can be specified in the MustGather object. If not specified, the cluster defaul proxy setting will be used. Here is an example:
+
+```yaml
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: MustGather
+metadata:
+  name: example-mustgather
+spec:
+  caseID: '02527285'
+  caseManagementAccountSecretRef:
+    name: case-management-creds
+  proxyConfig:
+    http_proxy: http://myproxy
+    https_proxy: https://my_http_proxy
+    no_proxy: master-api  
+```
+
 ## Garbage collection
 
 MustGather instances are cleaned up by the Must Gather operator about 6 hours after completion, regardless of whether they were successful.

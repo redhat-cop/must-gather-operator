@@ -45,10 +45,28 @@ spec:
               type: object
             mustGatherImages:
               description: 'The list of must gather images to run, optional, it will
-                default to: quay.io/openshift/origin-must-gather:latest'
+                default to: $DEFAULT_MUST_GATHER_IMAGE'
               items:
                 type: string
               type: array
+            proxyConfig:
+              description: This represents the proxy configuration to be used. If
+                left empty it will default to the cluster-level proxy configuration.
+              properties:
+                httpProxy:
+                  description: httpProxy is the URL of the proxy for HTTP requests.  Empty
+                    means unset and will not result in an env var.
+                  type: string
+                httpsProxy:
+                  description: httpsProxy is the URL of the proxy for HTTPS requests.  Empty
+                    means unset and will not result in an env var.
+                  type: string
+                noProxy:
+                  description: noProxy is the list of domains for which the proxy
+                    should not be used.  Empty means unset and will not result in
+                    an env var.
+                  type: string
+              type: object
             serviceAccountRef:
               description: the service account to use to run the must gather job pod,
                 defaults to default  +kubebuilder:default:="{Name:default}"

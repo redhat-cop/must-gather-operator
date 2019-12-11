@@ -185,6 +185,15 @@ spec:
           - get
           - list
           - create
+        - apiGroups:
+          - "config.openshift.io/v1"
+          resources:
+          - proxies
+          verbs:
+          - get
+          - list
+          resourceNames:
+          - cluster          
         serviceAccountName: must-gather-operator
     strategy: deployment
   installModes:

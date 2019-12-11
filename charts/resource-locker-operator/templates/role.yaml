@@ -61,4 +61,13 @@ rules:
   verbs:
   - get
   - list
-  - create    
+  - create
+- apiGroups:
+  - "config.openshift.io/v1"
+  resources:
+  - proxies
+  verbs:
+  - get
+  - list
+  resourceNames:
+  - cluster  

@@ -22,6 +22,18 @@ spec:
         - mountPath: /must-gather-upload
           name: must-gather-upload
         env:
+        {{ if .Spec.ProxyConfig.HTTPProxy -}}
+        - name: http_proxy
+          value: {{ .Spec.ProxyConfig.HTTPProxy }}
+        {{ end -}}
+        {{ if .Spec.ProxyConfig.HTTPSProxy -}}  
+        - name: https_proxy
+          value: {{ .Spec.ProxyConfig.HTTPSProxy }}
+        {{ end -}}
+        {{ if .Spec.ProxyConfig.NoProxy -}} 
+        - name: no_proxy
+          value: {{ .Spec.ProxyConfig.NoProxy }}  
+        {{ end -}}                  
         - name: username
           valueFrom:
             secretKeyRef:
