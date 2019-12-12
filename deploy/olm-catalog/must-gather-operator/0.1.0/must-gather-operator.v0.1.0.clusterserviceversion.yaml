@@ -126,7 +126,7 @@ spec:
                       fieldPath: metadata.name
                 - name: OPERATOR_NAME
                   value: must-gather-operator
-                image: quay.io/redhat-cop/must-gather-operator:latest
+                image: quay.io/redhat-cop/must-gather-operator:v0.1.0
                 imagePullPolicy: Always
                 name: must-gather-operator
                 resources: {}
