@@ -1,4 +1,4 @@
-# Resource Locker Operator
+# Must Gather Operator
 
 [![Build Status](https://travis-ci.org/redhat-cop/must-gather-operator.svg?branch=master)](https://travis-ci.org/redhat-cop/must-gather-operator) [![Docker Repository on Quay](https://quay.io/repository/redhat-cop/must-gather-operator/status "Docker Repository on Quay")](https://quay.io/repository/redhat-cop/must-gather-operator)
 
