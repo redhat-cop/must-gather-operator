@@ -177,7 +177,7 @@ spec:
               verbs:
                 - "*"
             - apiGroups:
-                - "batch/v1"
+                - "batch"
               resources:
                 - jobs
               verbs:
@@ -195,7 +195,7 @@ spec:
                 - create
                 - watch
             - apiGroups:
-                - "config.openshift.io/v1"
+                - "config.openshift.io"
               resources:
                 - proxies
               verbs:

@@ -54,7 +54,7 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-    - "batch/v1"
+    - "batch"
   resources:
     - jobs
   verbs:
@@ -72,7 +72,7 @@ rules:
     - create
     - watch
 - apiGroups:
-  - "config.openshift.io/v1"
+  - "config.openshift.io"
   resources:
   - proxies
   verbs:
