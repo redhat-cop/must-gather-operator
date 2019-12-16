@@ -50,6 +50,8 @@ rules:
       - redhatcop.redhat.io
     resources:
       - "mustgathers"
+      - mustgathers/finalizers
+      - mustgathers/status
     verbs:
       - "*"
   - apiGroups:
@@ -57,10 +59,13 @@ rules:
     resources:
       - jobs
     verbs:
-      - get
-      - list
-      - create
-      - watch
+      - "*"
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - "*"
   - apiGroups:
       - ""
     resources:
@@ -68,7 +73,6 @@ rules:
     verbs:
       - get
       - list
-      - create
       - watch
   - apiGroups:
       - "config.openshift.io"
