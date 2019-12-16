@@ -54,14 +54,23 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-  - "batch/v1"
+    - "batch/v1"
   resources:
-  - jobs
-  - secrets
+    - jobs
   verbs:
-  - get
-  - list
-  - create
+    - get
+    - list
+    - create
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - secrets
+  verbs:
+    - get
+    - list
+    - create
+    - watch
 - apiGroups:
   - "config.openshift.io/v1"
   resources:

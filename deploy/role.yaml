@@ -3,71 +3,79 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: must-gather-operator
 rules:
-# leader election   
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  - pods
-  verbs:
-  - "*"  
-#Metrics  
-- apiGroups:
-  - ""
-  resources:
-  - services
-  - services/finalizers
-  verbs:
-  - "*"
-#Metrics  
-- apiGroups:
-  - "apps"
-  resources:
-  - replicasets
-  - deployments
-  verbs: 
-  - "get"
-  - "list"
-# Metrics  
-- apiGroups:
-  - monitoring.coreos.com
-  resources:
-  - servicemonitors
-  verbs:
-  - "get"
-  - "create"
-# Metrics  
-- apiGroups:
-  - apps
-  resources:
-  - deployments/finalizers
-  resourceNames:
-  - must-gather-operator
-  verbs:
-  - "update"
-# operator busienss logic
-- apiGroups:
-  - redhatcop.redhat.io
-  resources:
-  - 'mustgathers'
-  verbs:
-  - '*'
-- apiGroups:
-  - "batch/v1"
-  resources:
-  - jobs
-  - secrets
-  verbs:
-  - get
-  - list
-  - create  
-  - watch
-- apiGroups:
-  - "config.openshift.io/v1"
-  resources:
-  - proxies
-  verbs:
-  - get
-  - list
-  resourceNames:
-  - cluster
+  # leader election
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - pods
+    verbs:
+      - "*"
+  #Metrics
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - services/finalizers
+    verbs:
+      - "*"
+  #Metrics
+  - apiGroups:
+      - "apps"
+    resources:
+      - replicasets
+      - deployments
+    verbs:
+      - "get"
+      - "list"
+  # Metrics
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - servicemonitors
+    verbs:
+      - "get"
+      - "create"
+  # Metrics
+  - apiGroups:
+      - apps
+    resources:
+      - deployments/finalizers
+    resourceNames:
+      - must-gather-operator
+    verbs:
+      - "update"
+  # operator busienss logic
+  - apiGroups:
+      - redhatcop.redhat.io
+    resources:
+      - "mustgathers"
+    verbs:
+      - "*"
+  - apiGroups:
+      - "batch/v1"
+    resources:
+      - jobs
+    verbs:
+      - get
+      - list
+      - create
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - create
+      - watch
+  - apiGroups:
+      - "config.openshift.io/v1"
+    resources:
+      - proxies
+    verbs:
+      - get
+      - list
+    resourceNames:
+      - cluster
