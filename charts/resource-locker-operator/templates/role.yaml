@@ -51,19 +51,32 @@ rules:
   - redhatcop.redhat.io
   resources:
   - 'mustgathers'
+  - mustgathers/finalizers
+  - mustgathers/status
   verbs:
   - '*'
 - apiGroups:
-  - "batch/v1"
+    - "batch"
   resources:
-  - jobs
-  - secrets
+    - jobs
   verbs:
-  - get
-  - list
-  - create
+    - "*"
 - apiGroups:
-  - "config.openshift.io/v1"
+    - ""
+  resources:
+    - events
+  verbs:
+    - "*"
+- apiGroups:
+    - ""
+  resources:
+    - secrets
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
+  - "config.openshift.io"
   resources:
   - proxies
   verbs:
