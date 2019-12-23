@@ -11,7 +11,30 @@ metadata:
             "name": "example-mustgather"
           },
           "spec": {
-            "size": 3
+            "caseID": "02527285",
+            "caseManagementAccountSecretRef": {
+              "name": "case-management-creds"
+            }
+          }
+        },
+        {
+          "apiVersion": "redhatcop.redhat.io/v1alpha1",
+          "kind": "MustGather",
+          "metadata": {
+            "name": "full-mustgather"
+          },
+          "spec": {
+            "caseID": "02527285",
+            "caseManagementAccountSecretRef": {
+              "name": "case-management-creds"
+            },
+            "serviceAccountRef": {
+              "name": "must-gather-admin"
+            },
+            "mustGatherImages": [
+              "quay.io/kubevirt/must-gather:latest",
+              "quay.io/ocs-dev/ocs-must-gather"
+            ]
           }
         }
       ]
@@ -107,7 +130,7 @@ spec:
                             fieldPath: metadata.name
                       - name: OPERATOR_NAME
                         value: must-gather-operator
-                    image: quay.io/redhat-cop/must-gather-operator:0.1.1
+                    image: quay.io/redhat-cop/must-gather-operator:v0.1.1
                     imagePullPolicy: Always
                     name: must-gather-operator
                     resources: {}
