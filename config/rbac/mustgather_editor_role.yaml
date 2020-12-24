@@ -1,0 +1,24 @@
+# permissions for end users to edit mustgathers.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: mustgather-editor-role
+rules:
+- apiGroups:
+  - redhatcop.redhat.io
+  resources:
+  - mustgathers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - redhatcop.redhat.io
+  resources:
+  - mustgathers/status
+  verbs:
+  - get
