@@ -1,0 +1,17 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: must-gather-operator 
+spec:
+  channel: alpha
+  installPlanApproval: Automatic
+  name: must-gather-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: must-gather-operator 
+spec:
+  targetNamespaces: []
