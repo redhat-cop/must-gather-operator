@@ -1,6 +1,8 @@
 # Must Gather Operator
 
-[![Build Status](https://travis-ci.org/redhat-cop/must-gather-operator.svg?branch=master)](https://travis-ci.org/redhat-cop/must-gather-operator) [![Docker Repository on Quay](https://quay.io/repository/redhat-cop/must-gather-operator/status "Docker Repository on Quay")](https://quay.io/repository/redhat-cop/must-gather-operator)
+![build status](https://github.com/redhat-cop/must-gather-operator/workflows/push/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/redhat-cop/must-gather-operator)](https://goreportcard.com/report/github.com/redhat-cop/must-gather-operator)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/redhat-cop/must-gather-operator)
 
 The must gather operator helps collecting must gather information on a cluster and uploading it to a case.
 To use the operator a cluster administrator can create the following must gather CR:
