@@ -2,8 +2,25 @@ apiVersion: v1
 entries:
   must-gather-operator:
   - apiVersion: v1
+    appVersion: v1.0.1
+    created: "2021-03-22T16:50:37.982120844Z"
+    description: Helm chart that deploys must-gather-operator
+    digest: b1198db2a5d821279d47bc8baff3de2586e8f814d7d8905c01af88718b54dae7
+    keywords:
+    - volume
+    - storage
+    - csi
+    - expansion
+    - monitoring
+    name: must-gather-operator
+    sources:
+    - https://github.com/redhat-cop/must-gather-operator
+    urls:
+    - https://redhat-cop.github.io/must-gather-operator/must-gather-operator/must-gather-operator-v1.0.1.tgz
+    version: v1.0.1
+  - apiVersion: v1
     appVersion: v1.0.0
-    created: "2021-01-16T19:50:59.974745463Z"
+    created: "2021-03-22T16:50:37.981692708Z"
     description: Helm chart that deploys must-gather-operator
     digest: afc869250604d4afcdeb8ed00b705643f2e76de5868c02faf398de2ba00d3b01
     keywords:
@@ -18,4 +35,4 @@ entries:
     urls:
     - https://redhat-cop.github.io/must-gather-operator/must-gather-operator/must-gather-operator-v1.0.0.tgz
     version: v1.0.0
-generated: "2021-01-16T19:50:59.974247568Z"
+generated: "2021-03-22T16:50:37.98111116Z"
