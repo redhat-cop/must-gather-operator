@@ -136,6 +136,29 @@ oc login --token ${token}
 make run ENABLE_WEBHOOKS=false
 ```
 
+### Test helm chart locally
+
+Define an image and tag. For example...
+
+```shell
+export imageRepository="quay.io/redhat-cop/must-gather-operator"
+export imageTag="v1.0.1"
+```
+
+Deploy chart...
+
+```shell
+make helmchart IMG=${imageRepository} VERSION=${imageTag}
+helm upgrade -i must-gather-operator-local charts/must-gather-operator -n must-gather-operator-local --create-namespace
+```
+
+Delete...
+
+```shell
+helm delete must-gather-operator-local -n must-gather-operator-local
+kubectl delete -f charts/must-gather-operator/crds/crds.yaml
+```
+
 ### Building/Pushing the operator image
 
 ```shell
