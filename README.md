@@ -131,7 +131,7 @@ oc new-project must-gather-operator-local
 kustomize build ./config/local-development | oc apply -f - -n must-gather-operator-local
 export DEFAULT_MUST_GATHER_IMAGE='quay.io/openshift/origin-must-gather:4.6'
 export JOB_TEMPLATE_FILE_NAME=./config/templates/job.template.yaml
-export token=$(oc serviceaccounts get-token 'default' -n must-gather-operator-local)
+export token=$(oc serviceaccounts get-token 'must-gather-operator-controller-manager' -n must-gather-operator-local)
 oc login --token ${token}
 make run ENABLE_WEBHOOKS=false
 ```
@@ -142,7 +142,7 @@ Define an image and tag. For example...
 
 ```shell
 export imageRepository="quay.io/redhat-cop/must-gather-operator"
-export imageTag="v1.0.1"
+export imageTag="$(git describe --tags --abbrev=0)" # grabs the most recent git tag, which should match the image tag
 ```
 
 Deploy chart...
