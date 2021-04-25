@@ -3,7 +3,8 @@ layout: go.kubebuilder.io/v3
 projectName: must-gather-operator
 repo: github.com/redhat-cop/must-gather-operator
 resources:
-- crdVersion: v1
+- api:
+    crdVersion: v1
   group: redhat-cop
   kind: MustGather
   version: v1alpha1
