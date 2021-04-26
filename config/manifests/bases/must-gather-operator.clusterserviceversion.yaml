@@ -9,6 +9,7 @@ metadata:
     containerImage: quay.io/redhat-cop/must-gather-operator
     createdAt: 11/14/2019
     description: This operator provides a facility to easily upload must-gather reports to a Red Hat case.
+    operatorframework.io/suggested-namespace: global-load-balancer-operator
     repository: https://github.com/redhat-cop/must-gather-operator
     support: Best Effort
   name: must-gather-operator.v0.0.0
