@@ -117,6 +117,14 @@ helm repo update
 helm upgrade must-gather-operator must-gather-operator/must-gather-operator
 ```
 
+## Metrics
+
+Prometheus compatible metrics are exposed by the Operator and can be integrated into OpenShift's default cluster monitoring. To enable OpenShift cluster monitoring, label the namespace the operator is deployed in with the label `openshift.io/cluster-monitoring="true"`.
+
+```shell
+oc label namespace <namespace> openshift.io/cluster-monitoring="true"
+```
+
 ## Development
 
 ### Running the operator locally
@@ -131,7 +139,7 @@ oc new-project must-gather-operator-local
 kustomize build ./config/local-development | oc apply -f - -n must-gather-operator-local
 export DEFAULT_MUST_GATHER_IMAGE='quay.io/openshift/origin-must-gather:4.6'
 export JOB_TEMPLATE_FILE_NAME=./config/templates/job.template.yaml
-export token=$(oc serviceaccounts get-token 'must-gather-operator-controller-manager' -n must-gather-operator-local)
+export token=$(oc serviceaccounts get-token 'must-gather-controller-manager' -n must-gather-operator-local)
 oc login --token ${token}
 make run ENABLE_WEBHOOKS=false
 ```
@@ -176,11 +184,21 @@ make bundle IMG=quay.io/$repo/must-gather-operator:latest
 operator-sdk bundle validate ./bundle --select-optional name=operatorhub
 make bundle-build BUNDLE_IMG=quay.io/$repo/must-gather-operator-bundle:latest
 docker login quay.io/$repo/must-gather-operator-bundle
-podman push quay.io/$repo/must-gather-operator-bundle:latest
+docker push quay.io/$repo/must-gather-operator-bundle:latest
 operator-sdk bundle validate quay.io/$repo/must-gather-operator-bundle:latest --select-optional name=operatorhub
 oc new-project must-gather-operator
+oc label namespace must-gather-operator openshift.io/cluster-monitoring="true"
 operator-sdk cleanup must-gather-operator -n must-gather-operator
 operator-sdk run bundle --install-mode AllNamespaces -n must-gather-operator quay.io/$repo/must-gather-operator-bundle:latest
+```
+
+#### Testing metrics
+
+```sh
+export operatorNamespace=must-gather-operator-local # or must-gather-operator
+oc label namespace ${operatorNamespace} openshift.io/cluster-monitoring="true"
+oc rsh -n openshift-monitoring -c prometheus prometheus-k8s-0 /bin/bash
+curl -v -s -k -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" https://namespace-configuration-operator-controller-manager-metrics.${operatorNamespace}.svc.cluster.local:8443/metrics
 ```
 
 ### Releasing
