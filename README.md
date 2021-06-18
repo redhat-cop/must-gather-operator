@@ -198,7 +198,9 @@ operator-sdk run bundle --install-mode AllNamespaces -n must-gather-operator qua
 export operatorNamespace=must-gather-operator-local # or must-gather-operator
 oc label namespace ${operatorNamespace} openshift.io/cluster-monitoring="true"
 oc rsh -n openshift-monitoring -c prometheus prometheus-k8s-0 /bin/bash
-curl -v -s -k -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" https://namespace-configuration-operator-controller-manager-metrics.${operatorNamespace}.svc.cluster.local:8443/metrics
+export operatorNamespace=must-gather-operator-local # or must-gather-operator
+curl -v -s -k -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" https://must-gather-operator-controller-manager-metrics.${operatorNamespace}.svc.cluster.local:8443/metrics
+exit
 ```
 
 ### Releasing
