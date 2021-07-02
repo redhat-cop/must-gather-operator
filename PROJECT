@@ -1,5 +1,6 @@
 domain: redhat.io
-layout: go.kubebuilder.io/v3
+layout: 
+- go.kubebuilder.io/v3
 projectName: must-gather-operator
 repo: github.com/redhat-cop/must-gather-operator
 resources:
@@ -8,6 +9,7 @@ resources:
   group: redhat-cop
   kind: MustGather
   version: v1alpha1
+  path: github.com/redhat-cop/must-gather-operator/api/v1alpha1
 version: "3"
 plugins:
   manifests.sdk.operatorframework.io/v2: {}

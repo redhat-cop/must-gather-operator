@@ -31,7 +31,7 @@ spec:
         - --logtostderr=true
         - --tls-cert-file=/etc/certs/tls/tls.crt
         - --tls-private-key-file=/etc/certs/tls/tls.key
-        - --v=10
+        - --v=10        
         image: "{{ .Values.kube_rbac_proxy.image.repository }}:{{ .Values.kube_rbac_proxy.image.tag }}"
         name: kube-rbac-proxy
         ports:
@@ -41,6 +41,10 @@ spec:
         - mountPath: /etc/certs/tls
           name: tls-cert
         imagePullPolicy: {{ .Values.kube_rbac_proxy.image.pullPolicy }}
+        {{- with .Values.env }}
+        env:
+         {{- toYaml . | nindent 8 }}
+        {{- end }}        
         resources:
           {{- toYaml .Values.kube_rbac_proxy.resources | nindent 10 }}
       - command:
