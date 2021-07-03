@@ -6,8 +6,11 @@ repo: github.com/redhat-cop/must-gather-operator
 resources:
 - api:
     crdVersion: v1
+    namespace: true
   group: redhat-cop
   kind: MustGather
+  domain: redhat.io
+  controller: true
   version: v1alpha1
   path: github.com/redhat-cop/must-gather-operator/api/v1alpha1
 version: "3"
