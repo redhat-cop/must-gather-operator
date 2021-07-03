@@ -6,7 +6,7 @@ repo: github.com/redhat-cop/must-gather-operator
 resources:
 - api:
     crdVersion: v1
-    namespace: true
+    namespaced: true
   group: redhat-cop
   kind: MustGather
   domain: redhat.io
