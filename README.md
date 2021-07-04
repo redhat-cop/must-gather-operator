@@ -125,6 +125,17 @@ Prometheus compatible metrics are exposed by the Operator and can be integrated 
 oc label namespace <namespace> openshift.io/cluster-monitoring="true"
 ```
 
+### Testing metrics
+
+```sh
+export operatorNamespace=must-gather-operator-local # or must-gather-operator
+oc label namespace ${operatorNamespace} openshift.io/cluster-monitoring="true"
+oc rsh -n openshift-monitoring -c prometheus prometheus-k8s-0 /bin/bash
+export operatorNamespace=must-gather-operator-local # or must-gather-operator
+curl -v -s -k -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" https://must-gather-operator-controller-manager-metrics.${operatorNamespace}.svc.cluster.local:8443/metrics
+exit
+```
+
 ## Development
 
 ### Running the operator locally
@@ -190,17 +201,6 @@ oc new-project must-gather-operator
 oc label namespace must-gather-operator openshift.io/cluster-monitoring="true"
 operator-sdk cleanup must-gather-operator -n must-gather-operator
 operator-sdk run bundle --install-mode AllNamespaces -n must-gather-operator quay.io/$repo/must-gather-operator-bundle:latest
-```
-
-#### Testing metrics
-
-```sh
-export operatorNamespace=must-gather-operator-local # or must-gather-operator
-oc label namespace ${operatorNamespace} openshift.io/cluster-monitoring="true"
-oc rsh -n openshift-monitoring -c prometheus prometheus-k8s-0 /bin/bash
-export operatorNamespace=must-gather-operator-local # or must-gather-operator
-curl -v -s -k -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" https://must-gather-operator-controller-manager-metrics.${operatorNamespace}.svc.cluster.local:8443/metrics
-exit
 ```
 
 ### Releasing
