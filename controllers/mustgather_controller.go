@@ -28,6 +28,7 @@ import (
 	configv1 "github.com/openshift/api/config/v1"
 	redhatcopv1alpha1 "github.com/redhat-cop/must-gather-operator/api/v1alpha1"
 	"github.com/redhat-cop/operator-utils/pkg/util"
+	"github.com/redhat-cop/operator-utils/pkg/util/templates"
 	"github.com/scylladb/go-set/strset"
 	batchv1 "k8s.io/api/batch/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -182,7 +183,7 @@ func (r *MustGatherReconciler) IsInitialized(instance *redhatcopv1alpha1.MustGat
 }
 
 func (r *MustGatherReconciler) getJobFromInstance(instance *redhatcopv1alpha1.MustGather) (*unstructured.Unstructured, error) {
-	unstructuredJob, err := util.ProcessTemplate(instance, r.jobTemplate)
+	unstructuredJob, err := templates.ProcessTemplate(context.Background(), instance, r.jobTemplate)
 	if err != nil {
 		r.Log.Error(err, "unable to process", "template", r.jobTemplate, "with parameter", instance)
 		return &unstructured.Unstructured{}, err

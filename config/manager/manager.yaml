@@ -22,6 +22,8 @@ spec:
     metadata:
       labels:
         operator: must-gather-operator
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
     spec:
       serviceAccountName: controller-manager
       containers:
@@ -47,6 +49,6 @@ spec:
           periodSeconds: 10
         resources:
           requests:
-            cpu: 100m
-            memory: 20Mi
+            cpu: 200m
+            memory: 100Mi
       terminationGracePeriodSeconds: 10
