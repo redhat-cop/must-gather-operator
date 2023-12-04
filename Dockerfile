@@ -1,5 +1,5 @@
 # Build the manager binary
-FROM golang:1.16 as builder
+FROM golang:1.21 as builder
 
 WORKDIR /workspace
 # Copy the Go Modules manifests
@@ -19,12 +19,13 @@ RUN  CGO_ENABLED=0 GOOS=linux go build -a -o manager main.go
 
 # Use distroless as minimal base image to package the manager binary
 # Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM registry.access.redhat.com/ubi8/ubi
+FROM registry.access.redhat.com/ubi9/ubi
 WORKDIR /
 COPY --from=builder /workspace/manager .
 COPY config/templates /etc/templates
 COPY config/docker /usr/local/bin
-RUN yum -y install --disableplugin=subscription-manager tar gzip && yum clean all
+RUN dnf -y install --disableplugin=subscription-manager tar gzip && \
+	dnf -y update ; dnf clean all
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]
