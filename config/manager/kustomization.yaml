@@ -13,4 +13,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/raffaelespazzoli/must-gather-operator
-  newTag: latest
+  newTag: latest@sha256:9721f780fcdddfd9d851f4b8f9c1a5e563cb9f192a6ce24f0997daeafe9365da
