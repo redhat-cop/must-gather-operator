@@ -24,7 +24,7 @@ jobs:
         go-version: ^1.16
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
     # - uses: shivanshs9/setup-k8s-operator-sdk@v1
     #   with:
@@ -135,7 +135,7 @@ jobs:
           echo "REPOSITORY_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v2       
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4       
       
       - name: Get the version
         id: get_version
@@ -148,7 +148,7 @@ jobs:
           git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: checkout gh-pages
-        uses: actions/checkout@v2
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           path: ./tmp/gh-pages
           ref: gh-pages
@@ -174,7 +174,7 @@ jobs:
           echo "REPOSITORY_NAME=$(basename $GITHUB_REPOSITORY)" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
       - run: |
           git fetch --prune --unshallow
@@ -217,7 +217,7 @@ jobs:
           echo "CONTEXT_PATH="
 
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
 
       - name: Set up Go 1.x
         uses: actions/setup-go@v2
@@ -246,7 +246,7 @@ jobs:
           echo "VERSION=${TAG:1}" >> $GITHUB_ENV
 
       - name: checkout community-operators-prod
-        uses: actions/checkout@v2
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           repository: redhat-openshift-ecosystem/community-operators-prod
           path: ./tmp/community-operators-prod
